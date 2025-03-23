@@ -1,0 +1,90 @@
+- what: UUID=1b94cf1d-65f1-434c-aac8-97ea0f3c1bdd
+  type: btrfs
+  where:
+    - path: /
+      subvol: /arch
+    - path: /home/user
+      subvol: /home/1000
+      hide: true
+    - /media/main
+  options:
+    - rw
+    - noatime
+    - user_subvol_rm_allowed
+    - compress=zstd:1
+    - discard=async
+
+# ESP
+- what: UUID=FF1D-EF91
+  type: vfat
+  where:
+    - /efi
+    - /recovery/efi
+  fsck: 2
+  options: 
+    - rw
+    - noatime
+    - fmask=0177
+    - dmask=0077
+    - codepage=437
+    - iocharset=ascii
+    - shortname=mixed
+    - utf8
+    - errors=remount-ro
+  hide: true
+
+- what: tmpfs
+  type: tmpfs
+  where: /test
+  options: 
+    - mode=755
+    - noatime
+    - size=50%
+    - nr_inodes=1m
+    - uid=hal
+    - gid=hal
+    - nofail
+  hide: true
+
+- &swap
+  what: LABEL=a
+  type: swap
+  options: 
+    - defaults
+    - pri=10
+  hide: false
+
+# Samsung PM981a
+- <<: *swap
+  what: LABEL=b
+
+# encrypted drives
+- what: UUID=a921b926-db88-4a12-b1f7-1d8c75c4498e
+  type: ext4
+  # shared: true
+  automount: true
+  options:
+    - noatime
+  crypt:
+    serial: BCE01EWSP
+    dm_name: tertius
+
+
+- what: UUID=2a5ece05-86d3-49ed-86a7-bce1d59c0a41
+  type: btrfs
+  # shared: true
+  automount: true
+  options:
+    - noatime
+    - compress=zstd:2
+  crypt:
+    serial: SAANA22
+    dm_name: quintus
+  path:
+    - /mmm
+    - /nnnn
+    - path: /xxxx
+      options:
+        - discard
+        - nocow
+        - subvol=/@test

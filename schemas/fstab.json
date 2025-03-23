@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "what": {
+        "type": "string",
+        "description": "fstab like spec"
+      },
+      "type": {
+        "type": "string",
+        "description": "filesystem type"
+      },
+      "where": {
+        "oneOf": [
+          {
+            "type": "string",
+            "description": "mount point"
+          },
+          {
+            "type": "array",
+            "description": "mount point(s)",
+            "items": {
+              "minItems": 1,
+              "oneOf": [
+                {
+                  "type": "string",
+                  "description": "mount point"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "description": "mount point"
+                    },
+                    "subvol": {
+                      "type": "string",
+                      "description": "subvolume"
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "mount options"
+                    },
+                    "hide": {
+                      "type": "boolean",
+                      "description": "hide the mount point from user"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "hide": {
+        "type": "boolean",
+        "description": "hide the mount point from user"
+      },
+      "fsck": {
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "description": "Determine the order in which filesystem checks are done at boot time. The root filesystem should be specified with a fs_passno of 1. Other filesystems should have a fs_passno of 2."
+      },
+      "options": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "mount options"
+      },
+      "automount": {
+        "type": "boolean",
+        "description": "use systemd.automount via udev"
+      },
+      "crypt": {
+        "type": "object",
+        "properties": {
+          "dm_name": {
+            "type": "string",
+            "description": "device mapper name."
+          },
+          "serial": {
+            "type": "string",
+            "description": "serial number of disk, used when the whole disk is encrypted"
+          },
+          "partuuid": {
+            "type": "string",
+            "description": "uuid of partition, use when a partition is encrypted"
+          }
+        },
+        "description": "the filesystem is encrypted"
+      }
+    },
+    "additionalProperties": false,
+    "required": [
+      "what",
+      "type"
+    ]
+  }
+}
